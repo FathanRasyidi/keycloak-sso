@@ -428,6 +428,9 @@
                     
                     // Stop saat waktu habis
                     if (timeLeft <= 0) {
+                        // Cek status satu kali lagi sebelum expired
+                        checkAuthStatus(execId);
+
                         clearInterval(timerInterval);
                         clearInterval(pollingInterval);
                         
@@ -471,7 +474,7 @@
                 // Buat form untuk submit ke iframe
                 const checkForm = document.createElement('form');
                 checkForm.method = 'POST';
-                checkForm.action = '${url.loginAction}';
+                checkForm.action = document.getElementById('kc-form-login') ? document.getElementById('kc-form-login').action : '${url.loginAction}';
                 checkForm.target = iframe.name;
                 checkForm.style.display = 'none';
                 
@@ -534,6 +537,18 @@
                             const newTabId = newQrData.getAttribute('data-tab-id');
                             const newExecId = newQrData.getAttribute('data-qr-exec-id');
                             
+                            // Ambil URL action baru dari form di iframe
+                            const newForm = iframeDoc.getElementById('kc-form-login');
+                            if (newForm && newForm.action) {
+                                // Update form action di halaman utama
+                                const mainForm = document.getElementById('kc-form-login');
+                                if (mainForm) mainForm.action = newForm.action;
+
+                                // Update form action di modal QR
+                                const qrForm = document.getElementById('qr-submit-form');
+                                if (qrForm) qrForm.action = newForm.action;
+                            }
+                            
                             if (newQrImage && qrImage) {
                                 // Update QR image
                                 qrImage.src = 'data:image/png;base64,' + newQrImage;
@@ -582,8 +597,10 @@
                     }, 100);
                 };
                 
-                // Load halaman login ke iframe
-                iframe.src = window.location.href;
+                // Load halaman login ke iframe dengan cache busting
+                const currentUrl = new URL(window.location.href);
+                currentUrl.searchParams.set('reload', Date.now());
+                iframe.src = currentUrl.toString();
             }
             
             function resetQRTimer(execId) {
