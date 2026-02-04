@@ -266,6 +266,56 @@
 
     <#elseif section = "script">
         <script>
+            // Check for error from login.ftl redirect (via sessionStorage)
+            document.addEventListener('DOMContentLoaded', function() {
+                const storedError = sessionStorage.getItem('auth_error');
+                if (storedError) {
+                    try {
+                        const errorData = JSON.parse(storedError);
+                        // Clear immediately so it doesn't show again on refresh
+                        sessionStorage.removeItem('auth_error');
+                        
+                        if (errorData && errorData.summary) {
+                            showErrorAlert(errorData.summary, errorData.type);
+                        }
+                    } catch (e) {
+                        console.error('Failed to parse auth_error', e);
+                    }
+                }
+            });
+
+            function showErrorAlert(message, type) {
+                // Determine color based on type
+                const isError = type === 'error' || type === 'warning';
+                const isSuccess = type === 'success';
+                
+                const bgClass = isError ? 'bg-red-50 border-red-200' : (isSuccess ? 'bg-green-50 border-green-200' : 'bg-blue-50 border-blue-200');
+                const textClass = isError ? 'text-red-700' : (isSuccess ? 'text-green-700' : 'text-blue-700');
+                const iconClass = isError ? 'text-red-500' : (isSuccess ? 'text-green-500' : 'text-blue-500');
+                const iconName = isError ? 'error' : (isSuccess ? 'check_circle' : 'info');
+                const title = isError ? 'Login Gagal' : (isSuccess ? 'Berhasil' : 'Informasi');
+                const msgClass = isError ? 'text-red-600' : (isSuccess ? 'text-green-600' : 'text-blue-600');
+
+                const alertHTML = 
+                    '<div class="p-4 rounded-lg border text-sm flex items-start gap-3 mb-5 ' + bgClass + ' ' + textClass + '">' +
+                    '<span class="material-icons-round text-xl flex-shrink-0 ' + iconClass + '">' + iconName + '</span>' +
+                    '<div>' +
+                    '<p class="font-medium">' + title + '</p>' +
+                    '<p class="' + msgClass + '">' + message + '</p>' +
+                    '</div>' +
+                    '</div>';
+
+                // Insert at top of form
+                const form = document.getElementById('kc-form-login');
+                if (form) {
+                    // Remove existing alerts first to avoid duplicates
+                    const existingAlerts = form.querySelectorAll('.rounded-lg.border.flex.items-start');
+                    existingAlerts.forEach(el => el.remove());
+                    
+                    form.insertAdjacentHTML('afterbegin', alertHTML);
+                }
+            }
+            
             function togglePasswordVisibility(inputId, button) {
                 const input = document.getElementById(inputId);
                 const icon = button.querySelector('.material-icons-round');
