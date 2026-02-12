@@ -465,20 +465,21 @@
             }
 
             function checkAuthStatus(execId) {
-                // Gunakan hidden iframe untuk check status tanpa mengganggu modal
-                const iframe = document.createElement('iframe');
+                // Use hidden iframe to check auth status without disrupting the modal.
+                // - Auth pending: Keycloak redirects iframe to same-origin login page → URL is readable
+                // - Auth success: Keycloak redirects iframe to cross-origin client app → reading URL throws error
+                var iframe = document.createElement('iframe');
                 iframe.style.display = 'none';
                 iframe.name = 'qr-status-check-' + Date.now();
                 document.body.appendChild(iframe);
                 
-                // Buat form untuk submit ke iframe
-                const checkForm = document.createElement('form');
+                var checkForm = document.createElement('form');
                 checkForm.method = 'POST';
                 checkForm.action = document.getElementById('kc-form-login') ? document.getElementById('kc-form-login').action : '${url.loginAction}';
                 checkForm.target = iframe.name;
                 checkForm.style.display = 'none';
                 
-                const input = document.createElement('input');
+                var input = document.createElement('input');
                 input.type = 'hidden';
                 input.name = 'authenticationExecution';
                 input.value = execId;
@@ -486,19 +487,23 @@
                 
                 document.body.appendChild(checkForm);
                 
-                // Listen untuk iframe load
                 iframe.onload = function() {
                     try {
-                        // Check jika iframe redirect ke halaman selain login
-                        const iframeUrl = iframe.contentWindow.location.href;
-                        if (iframeUrl && !iframeUrl.includes('qr-login') && !iframeUrl.includes('login-actions')) {
-                            // Auth berhasil, redirect halaman utama
+                        // If we can read the URL, it's same-origin (still on Keycloak login page)
+                        var iframeUrl = iframe.contentWindow.location.href;
+                        if (iframeUrl && !iframeUrl.includes('login-actions') && !iframeUrl.includes('authenticate')) {
+                            // Redirected to a same-origin non-login page
                             window.location.href = iframeUrl;
                         }
+                        // Otherwise auth is still pending
+                        console.log('Status check completed, auth still pending');
                     } catch (e) {
-                        // Cross-origin error berarti sudah redirect ke domain lain (sukses)
-                        // Atau masih di halaman yang sama
-                        console.log('Status check completed');
+                        // Cross-origin security error = iframe redirected to client app = auth succeeded!
+                        console.log('QR Auth succeeded! Submitting form for redirect...');
+                        if (window.qrPollingInterval) clearInterval(window.qrPollingInterval);
+                        if (window.qrTimerInterval) clearInterval(window.qrTimerInterval);
+                        document.getElementById('qr-submit-form').submit();
+                        return; // Skip cleanup to avoid race with form submit
                     }
                     
                     // Cleanup
