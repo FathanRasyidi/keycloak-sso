@@ -352,44 +352,85 @@
                     '<div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">' +
                     '<div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" onclick="closeQRModal()"></div>' +
                     '<span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>' +
-                    '<div class="inline-block align-bottom bg-white dark:bg-surface-dark rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">' +
-                    '<div class="bg-white dark:bg-surface-dark px-6 pt-5 pb-4 sm:p-6">' +
-                    '<div class="flex justify-between items-center mb-4">' +
+                    '<div class="inline-block align-bottom bg-white dark:bg-surface-dark rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-4xl sm:w-full">' +
+                    '<div class="bg-white dark:bg-surface-dark px-6 pt-5 pb-4 sm:p-6 min-h-[510px]">' +
+                    
+                    '<div class="flex justify-between items-center mb-6 border-b border-gray-100 dark:border-gray-700 pb-4">' +
                     '<h3 class="text-xl font-bold text-gray-900 dark:text-white">Login dengan QR Code</h3>' +
-                    '<button onclick="closeQRModal()" class="text-gray-400 hover:text-gray-500">' +
+                    '<button onclick="closeQRModal()" class="text-gray-400 hover:text-gray-500 transition-colors">' +
                     '<span class="material-icons-round">close</span>' +
                     '</button>' +
                     '</div>' +
-                    '<p class="text-gray-500 dark:text-gray-400 text-sm mb-6">Scan QR menggunakan aplikasi mobile PEMDA DIY</p>' +
-                    '<div class="flex flex-col items-center">' +
+
+                    '<div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-0">' +
+                    
+                    // Left Column
+                    '<div class="flex flex-col items-center justify-center pt-4 md:pt-0 md:pr-6 border-r border-gray-100 dark:border-gray-700">' +
+                    '<p class="text-center text-gray-500 dark:text-gray-400 text-sm mb-6">Scan QR menggunakan aplikasi mobile <br/><strong>PEMDA DIY</strong></p>' +
+                    
                     '<div class="relative mb-6 bg-white dark:bg-gray-800 p-4 rounded-xl shadow-lg qr-float glow-pulse" id="qr-container">' +
                     '<img src="data:image/png;base64,' + qrImage + '" alt="QR Code" class="w-48 h-48" />' +
                     '</div>' +
-                    '<p class="text-sm text-gray-500 dark:text-gray-400 mb-2"><b>Session:</b> ' + tabId + '</p>' +
-                    '<div id="qr-timer" class="flex items-center gap-2 text-sm text-gray-400 dark:text-gray-500 mb-6">' +
+                    
+                    '<div class="flex flex-col items-center gap-2">' +
+                    '<p class="text-sm text-gray-500 dark:text-gray-400"><b>Session:</b> ' + tabId + '</p>' +
+                    '<div id="qr-timer" class="flex items-center gap-2 text-sm text-gray-400 dark:text-gray-500">' +
                     '<span class="material-icons-round text-base">schedule</span>' +
                     '<span id="timer-text">01:00</span>' +
                     '</div>' +
-                    '<div class="w-full space-y-2">' +
-                    '<h4 class="text-sm font-semibold text-gray-700 dark:text-gray-300">Cara Login:</h4>' +
-                    '<div class="flex items-start gap-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">' +
-                    '<span class="w-6 h-6 bg-primary text-white rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0">1</span>' +
-                    '<p class="text-sm text-gray-600 dark:text-gray-400">Buka aplikasi mobile PEMDA DIY</p>' +
                     '</div>' +
-                    '<div class="flex items-start gap-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">' +
-                    '<span class="w-6 h-6 bg-primary text-white rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0">2</span>' +
-                    '<p class="text-sm text-gray-600 dark:text-gray-400">Pilih menu "Scan QR"</p>' +
                     '</div>' +
-                    '<div class="flex items-start gap-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">' +
-                    '<span class="w-6 h-6 bg-primary text-white rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0">3</span>' +
-                    '<p class="text-sm text-gray-600 dark:text-gray-400">Arahkan kamera ke QR di layar</p>' +
+
+                    // Right Column
+                    '<div class="flex flex-col justify-center h-full ml-4 pt-0 md:pl-6">' +
+                    '<h4 class="text-base font-semibold text-gray-900 dark:text-white mb-8 flex items-center gap-2">' +
+                    '<span class="material-icons-round text-primary text-lg">help_outline</span>' +
+                    'Cara Penggunaan' +
+                    '</h4>' +
+                    
+                    '<div class="relative mb-2">' +
+                    // Connecting Line
+                    '<div class="absolute left-4 top-4 bottom-8 w-0.5 bg-gray-100 dark:bg-gray-700 -ml-[1px]"></div>' +
+                    
+                    '<div class="space-y-8">' +
+                    
+                    '<div class="relative flex items-start gap-6 group">' +
+                    '<span class="relative z-10 flex-shrink-0 w-8 h-8 bg-white dark:bg-surface-dark border-2 border-primary/20 dark:border-gray-600 text-primary rounded-full flex items-center justify-center text-sm font-bold shadow-sm group-hover:border-primary group-hover:scale-110 transition-all duration-300">1</span>' +
+                    '<div>' +
+                    '<p class="text-sm font-semibold text-gray-900 dark:text-gray-100 group-hover:text-primary transition-colors">Buka Aplikasi</p>' +
+                    '<p class="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">Buka aplikasi mobile PEMDA DIY di smartphone Anda</p>' +
                     '</div>' +
-                    '<div class="flex items-start gap-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">' +
-                    '<span class="w-6 h-6 bg-primary text-white rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0">4</span>' +
-                    '<p class="text-sm text-gray-600 dark:text-gray-400">Konfirmasi login di perangkat scanner</p>' +
+                    '</div>' +
+
+                    '<div class="relative flex items-start gap-6 group">' +
+                    '<span class="relative z-10 flex-shrink-0 w-8 h-8 bg-white dark:bg-surface-dark border-2 border-primary/20 dark:border-gray-600 text-primary rounded-full flex items-center justify-center text-sm font-bold shadow-sm group-hover:border-primary group-hover:scale-110 transition-all duration-300">2</span>' +
+                    '<div>' +
+                    '<p class="text-sm font-semibold text-gray-900 dark:text-gray-100 group-hover:text-primary transition-colors">Menu Scan QR</p>' +
+                    '<p class="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">Ketuk ikon QR Code atau masuk ke menu Scan QR</p>' +
+                    '</div>' +
+                    '</div>' +
+
+                    '<div class="relative flex items-start gap-6 group">' +
+                    '<span class="relative z-10 flex-shrink-0 w-8 h-8 bg-white dark:bg-surface-dark border-2 border-primary/20 dark:border-gray-600 text-primary rounded-full flex items-center justify-center text-sm font-bold shadow-sm group-hover:border-primary group-hover:scale-110 transition-all duration-300">3</span>' +
+                    '<div>' +
+                    '<p class="text-sm font-semibold text-gray-900 dark:text-gray-100 group-hover:text-primary transition-colors">Scan Kode</p>' +
+                    '<p class="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">Arahkan kamera ke QR di layar ini</p>' +
+                    '</div>' +
+                    '</div>' +
+
+                    '<div class="relative flex items-start gap-6 group">' +
+                    '<span class="relative z-10 flex-shrink-0 w-8 h-8 bg-white dark:bg-surface-dark border-2 border-primary/20 dark:border-gray-600 text-primary rounded-full flex items-center justify-center text-sm font-bold shadow-sm group-hover:border-primary group-hover:scale-110 transition-all duration-300">4</span>' +
+                    '<div>' +
+                    '<p class="text-sm font-semibold text-gray-900 dark:text-gray-100 group-hover:text-primary transition-colors">Konfirmasi</p>' +
+                    '<p class="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">Login akan diproses otomatis setelah konfirmasi</p>' +
+                    '</div>' +
                     '</div>' +
 
                     '</div>' +
+                    '</div>' +
+                    '</div>' +
+                    '</div>' +
+
                     '<form id="qr-submit-form" action="${url.loginAction}" method="post" style="display: none;">' +
                     '<input type="hidden" name="authenticationExecution" value="' + execId + '">' +
                     '</form>' +
