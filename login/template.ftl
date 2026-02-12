@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <meta http-equiv="Content-Security-Policy" content="frame-ancestors 'self' http://10.7.183.76:3000 https://10.7.183.76:3000 http://localhost:3000 https://localhost:3000; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://fonts.googleapis.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.tailwindcss.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self';" />
+    <meta http-equiv="Content-Security-Policy" content="frame-ancestors 'self' http://10.7.183.76:3000 https://10.7.183.76:3000 http://localhost:3000 https://localhost:3000 http://10.7.183.76:8080 https://10.7.183.76:8080; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.tailwindcss.com https://fonts.googleapis.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.tailwindcss.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' http://10.7.183.76:8080 https://10.7.183.76:8080; form-action 'self' http://10.7.183.76:3000 https://10.7.183.76:3000;" />
     <title>${msg("loginTitle")}</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
