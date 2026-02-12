@@ -363,7 +363,7 @@
                     '<p class="text-gray-500 dark:text-gray-400 text-sm mb-6">Scan QR menggunakan aplikasi mobile PEMDA DIY</p>' +
                     '<div class="flex flex-col items-center">' +
                     '<div class="relative mb-6 bg-white dark:bg-gray-800 p-4 rounded-xl shadow-lg qr-float glow-pulse" id="qr-container">' +
-                    '<img src="data:image/png;base64,' + qrImage + '" alt="QR Code" class="w-48 h-48 cursor-pointer hover:opacity-80 transition-opacity" onclick="document.getElementById(\'qr-submit-form\').submit();" />' +
+                    '<img src="data:image/png;base64,' + qrImage + '" alt="QR Code" class="w-48 h-48" />' +
                     '</div>' +
                     '<p class="text-sm text-gray-500 dark:text-gray-400 mb-2"><b>Session:</b> ' + tabId + '</p>' +
                     '<div id="qr-timer" class="flex items-center gap-2 text-sm text-gray-400 dark:text-gray-500 mb-6">' +
@@ -386,8 +386,9 @@
                     '</div>' +
                     '<div class="flex items-start gap-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">' +
                     '<span class="w-6 h-6 bg-primary text-white rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0">4</span>' +
-                    '<p class="text-sm text-gray-600 dark:text-gray-400">Setelah scan, klik QR code untuk melanjutkan</p>' +
+                    '<p class="text-sm text-gray-600 dark:text-gray-400">Konfirmasi login di perangkat scanner</p>' +
                     '</div>' +
+
                     '</div>' +
                     '<form id="qr-submit-form" action="${url.loginAction}" method="post" style="display: none;">' +
                     '<input type="hidden" name="authenticationExecution" value="' + execId + '">' +
