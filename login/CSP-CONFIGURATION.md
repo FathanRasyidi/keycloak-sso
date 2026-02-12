@@ -4,6 +4,12 @@
 
 This document explains the Content Security Policy (CSP) configuration applied to the Keycloak login theme to fix CSP violations and enable proper authentication flow with automatic redirection.
 
+## ⚠️ Important Notes
+
+- **Environment-Specific Configuration**: The CSP includes hardcoded IP addresses (10.7.183.76) specific to the deployment environment. For production use or different environments, update these values or use server-level CSP configuration.
+- **Security Trade-offs**: The configuration uses `'unsafe-inline'` and `'unsafe-eval'` due to Keycloak theme limitations. For enhanced security in production, consider server-level CSP with nonces.
+- **Logo Placeholder**: The logo file in `resources/img/` is a placeholder. Replace with the actual Pemda DIY logo before deployment.
+
 ## Problem
 
 The original issues encountered were:

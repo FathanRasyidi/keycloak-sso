@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200">
+  <rect width="200" height="200" fill="#4A1C6F"/>
+  <text x="100" y="90" font-family="Arial, sans-serif" font-size="16" fill="white" text-anchor="middle">
+    LOGO PEMDA DIY
+  </text>
+  <text x="100" y="115" font-family="Arial, sans-serif" font-size="12" fill="#D4AF37" text-anchor="middle">
+    Placeholder
+  </text>
+  <text x="100" y="135" font-family="Arial, sans-serif" font-size="10" fill="white" text-anchor="middle">
+    Replace with actual logo
+  </text>
+</svg>
