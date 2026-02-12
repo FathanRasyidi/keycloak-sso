@@ -465,50 +465,53 @@
             }
 
             function checkAuthStatus(execId) {
-                // Gunakan hidden iframe untuk check status tanpa mengganggu modal
-                const iframe = document.createElement('iframe');
-                iframe.style.display = 'none';
-                iframe.name = 'qr-status-check-' + Date.now();
-                document.body.appendChild(iframe);
+                // Use fetch API to check authentication status
+                const formAction = document.getElementById('kc-form-login') 
+                    ? document.getElementById('kc-form-login').action 
+                    : '${url.loginAction}';
                 
-                // Buat form untuk submit ke iframe
-                const checkForm = document.createElement('form');
-                checkForm.method = 'POST';
-                checkForm.action = document.getElementById('kc-form-login') ? document.getElementById('kc-form-login').action : '${url.loginAction}';
-                checkForm.target = iframe.name;
-                checkForm.style.display = 'none';
+                // Create form data
+                const formData = new FormData();
+                formData.append('authenticationExecution', execId);
                 
-                const input = document.createElement('input');
-                input.type = 'hidden';
-                input.name = 'authenticationExecution';
-                input.value = execId;
-                checkForm.appendChild(input);
-                
-                document.body.appendChild(checkForm);
-                
-                // Listen untuk iframe load
-                iframe.onload = function() {
-                    try {
-                        // Check jika iframe redirect ke halaman selain login
-                        const iframeUrl = iframe.contentWindow.location.href;
-                        if (iframeUrl && !iframeUrl.includes('qr-login') && !iframeUrl.includes('login-actions')) {
-                            // Auth berhasil, redirect halaman utama
-                            window.location.href = iframeUrl;
-                        }
-                    } catch (e) {
-                        // Cross-origin error berarti sudah redirect ke domain lain (sukses)
-                        // Atau masih di halaman yang sama
-                        console.log('Status check completed');
-                    }
+                // Use fetch with manual redirect - detect redirect without following it
+                fetch(formAction, {
+                    method: 'POST',
+                    body: formData,
+                    redirect: 'manual', // Don't follow redirects, just detect them
+                    credentials: 'same-origin'
+                })
+                .then(function(response) {
+                    console.log('QR status check - Response type:', response.type, 'Status:', response.status);
                     
-                    // Cleanup
-                    setTimeout(function() {
-                        if (iframe.parentNode) iframe.parentNode.removeChild(iframe);
-                        if (checkForm.parentNode) checkForm.parentNode.removeChild(checkForm);
-                    }, 100);
-                };
-                
-                checkForm.submit();
+                    // Check if this is an opaque redirect (authentication succeeded)
+                    if (response.type === 'opaqueredirect') {
+                        // Authentication successful! 
+                        // We can't read where it's redirecting due to CORS/CSP,
+                        // but we know it's redirecting, so submit the form normally
+                        // and let the browser handle the navigation
+                        console.log('Authentication approved! Submitting form to follow redirect...');
+                        
+                        // Create a form and submit it normally so browser handles redirect
+                        const form = document.createElement('form');
+                        form.method = 'POST';
+                        form.action = formAction;
+                        
+                        const input = document.createElement('input');
+                        input.type = 'hidden';
+                        input.name = 'authenticationExecution';
+                        input.value = execId;
+                        form.appendChild(input);
+                        
+                        document.body.appendChild(form);
+                        form.submit();
+                    }
+                    // Otherwise, still waiting for authentication - do nothing
+                })
+                .catch(function(error) {
+                    // Silently handle errors during polling
+                    console.log('Status check error (expected during polling):', error.message);
+                });
             }
 
             function refreshQRCode() {
@@ -521,86 +524,82 @@
                     overlay.innerHTML = '<div class="flex items-center gap-2 text-primary"><span class="material-icons-round animate-spin">refresh</span><span class="font-medium">Loading...</span></div>';
                 }
                 
-                // Fetch halaman untuk mendapatkan QR baru menggunakan iframe
-                const iframe = document.createElement('iframe');
-                iframe.style.display = 'none';
-                iframe.name = 'qr-refresh-frame-' + Date.now();
-                document.body.appendChild(iframe);
-                
-                iframe.onload = function() {
-                    try {
-                        const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-                        const newQrData = iframeDoc.getElementById('qr-auth-data');
-                        
-                        if (newQrData) {
-                            const newQrImage = newQrData.getAttribute('data-qr-image');
-                            const newTabId = newQrData.getAttribute('data-tab-id');
-                            const newExecId = newQrData.getAttribute('data-qr-exec-id');
-                            
-                            // Ambil URL action baru dari form di iframe
-                            const newForm = iframeDoc.getElementById('kc-form-login');
-                            if (newForm && newForm.action) {
-                                // Update form action di halaman utama
-                                const mainForm = document.getElementById('kc-form-login');
-                                if (mainForm) mainForm.action = newForm.action;
-
-                                // Update form action di modal QR
-                                const qrForm = document.getElementById('qr-submit-form');
-                                if (qrForm) qrForm.action = newForm.action;
-                            }
-                            
-                            if (newQrImage && qrImage) {
-                                // Update QR image
-                                qrImage.src = 'data:image/png;base64,' + newQrImage;
-                                
-                                // Update session text
-                                const sessionText = document.querySelector('#qrModal p b');
-                                if (sessionText) {
-                                    sessionText.parentElement.innerHTML = '<b>Session:</b> ' + (newTabId || 'N/A');
-                                }
-                                
-                                // Update hidden form
-                                const execInput = document.querySelector('#qr-submit-form input[name="authenticationExecution"]');
-                                if (execInput && newExecId) {
-                                    execInput.value = newExecId;
-                                }
-                                
-                                // Update data di qr-auth-data utama
-                                const mainQrData = document.getElementById('qr-auth-data');
-                                if (mainQrData) {
-                                    mainQrData.setAttribute('data-qr-image', newQrImage);
-                                    mainQrData.setAttribute('data-tab-id', newTabId || '');
-                                    mainQrData.setAttribute('data-qr-exec-id', newExecId || '');
-                                }
-                                
-                                // Remove overlay
-                                if (overlay) {
-                                    overlay.remove();
-                                }
-                                
-                                // Reset timer
-                                resetQRTimer(newExecId);
-                            }
-                        } else {
-                            // Fallback ke reload jika gagal parse
-                            window.location.reload();
-                        }
-                    } catch (e) {
-                        console.error('QR refresh error:', e);
-                        // Fallback ke reload dengan parameter
-                        window.location.href = window.location.href + (window.location.href.includes('?') ? '&' : '?') + 'openQR=1';
-                    }
-                    
-                    // Cleanup iframe
-                    setTimeout(function() {
-                        if (iframe.parentNode) iframe.parentNode.removeChild(iframe);
-                    }, 100);
-                };
-                
-                // Load halaman login ke iframe dengan cache busting
+                // Use fetch to get fresh QR code
                 const currentUrl = new URL(window.location.href);
                 currentUrl.searchParams.set('reload', Date.now());
-                iframe.src = currentUrl.toString();
+                
+                fetch(currentUrl.toString(), {
+                    method: 'GET',
+                    credentials: 'same-origin'
+                })
+                .then(function(response) {
+                    return response.text();
+                })
+                .then(function(html) {
+                    // Parse HTML response
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    const newQrData = doc.getElementById('qr-auth-data');
+                    
+                    if (newQrData) {
+                        const newQrImage = newQrData.getAttribute('data-qr-image');
+                        const newTabId = newQrData.getAttribute('data-tab-id');
+                        const newExecId = newQrData.getAttribute('data-qr-exec-id');
+                        
+                        // Get new form action URL
+                        const newForm = doc.getElementById('kc-form-login');
+                        if (newForm && newForm.action) {
+                            // Update form action in main page
+                            const mainForm = document.getElementById('kc-form-login');
+                            if (mainForm) mainForm.action = newForm.action;
+
+                            // Update form action in QR modal
+                            const qrForm = document.getElementById('qr-submit-form');
+                            if (qrForm) qrForm.action = newForm.action;
+                        }
+                        
+                        if (newQrImage && qrImage) {
+                            // Update QR image
+                            qrImage.src = 'data:image/png;base64,' + newQrImage;
+                            
+                            // Update session text
+                            const sessionText = document.querySelector('#qrModal p b');
+                            if (sessionText) {
+                                sessionText.parentElement.innerHTML = '<b>Session:</b> ' + (newTabId || 'N/A');
+                            }
+                            
+                            // Update hidden form
+                            const execInput = document.querySelector('#qr-submit-form input[name="authenticationExecution"]');
+                            if (execInput && newExecId) {
+                                execInput.value = newExecId;
+                            }
+                            
+                            // Update data in main qr-auth-data
+                            const mainQrData = document.getElementById('qr-auth-data');
+                            if (mainQrData) {
+                                mainQrData.setAttribute('data-qr-image', newQrImage);
+                                mainQrData.setAttribute('data-tab-id', newTabId || '');
+                                mainQrData.setAttribute('data-qr-exec-id', newExecId || '');
+                            }
+                            
+                            // Remove overlay
+                            if (overlay) {
+                                overlay.remove();
+                            }
+                            
+                            // Reset timer
+                            resetQRTimer(newExecId);
+                        }
+                    } else {
+                        // Fallback to reload if parsing fails
+                        window.location.reload();
+                    }
+                })
+                .catch(function(error) {
+                    console.error('QR refresh error:', error);
+                    // Fallback to reload with parameter
+                    window.location.href = window.location.href + (window.location.href.includes('?') ? '&' : '?') + 'openQR=1';
+                });
             }
             
             function resetQRTimer(execId) {
