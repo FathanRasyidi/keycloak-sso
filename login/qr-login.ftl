@@ -443,8 +443,31 @@
                 document.body.insertAdjacentHTML('beforeend', modalHTML);
                 document.body.style.overflow = 'hidden';
 
-                // Start polling untuk check authentication status
-                startQRPolling(execId);
+                // Check if this is the first open or a re-open
+                if (typeof window.qrFirstOpen === 'undefined') {
+                    window.qrFirstOpen = true;
+                }
+
+                if (window.qrFirstOpen) {
+                    // First time: Use the static QR code from page load
+                    window.qrFirstOpen = false;
+                    startQRPolling(execId);
+                } else {
+                    // Re-open: The static QR is likely stale/expired. Force a refresh.
+                    // Show loading overlay immediately
+                    const qrContainer = document.getElementById('qr-container');
+                    if (qrContainer) {
+                        qrContainer.style.position = 'relative';
+                        const overlay = document.createElement('div');
+                        overlay.id = 'qr-overlay';
+                        overlay.className = 'absolute inset-0 flex items-center justify-center bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-xl';
+                        overlay.innerHTML = '<div class="flex items-center gap-2 text-primary"><span class="material-icons-round animate-spin">refresh</span><span class="font-medium">Refreshing Session...</span></div>';
+                        qrContainer.appendChild(overlay);
+                    }
+                    
+                    // Fetch new QR session
+                    refreshQRCode();
+                }
             }
 
             function startQRPolling(execId) {
@@ -510,6 +533,13 @@
                 // Use hidden iframe to check auth status without disrupting the modal.
                 // - Auth pending: Keycloak redirects iframe to same-origin login page → URL is readable
                 // - Auth success: Keycloak redirects iframe to cross-origin client app → reading URL throws error
+                
+                // Determine Action URL
+                // Prioritize the modal's internal form if it exists (updated by refresh), then main form
+                const qrForm = document.getElementById('qr-submit-form');
+                const mainForm = document.getElementById('kc-form-login');
+                const actionUrl = qrForm ? qrForm.action : (mainForm ? mainForm.action : '${url.loginAction}');
+                
                 var iframe = document.createElement('iframe');
                 iframe.style.display = 'none';
                 iframe.name = 'qr-status-check-' + Date.now();
@@ -517,14 +547,19 @@
                 
                 var checkForm = document.createElement('form');
                 checkForm.method = 'POST';
-                checkForm.action = document.getElementById('kc-form-login') ? document.getElementById('kc-form-login').action : '${url.loginAction}';
+                checkForm.action = actionUrl;
                 checkForm.target = iframe.name;
                 checkForm.style.display = 'none';
+                
+                // Prioritize the DOM value from the modal's form which is updated by refreshQRCode
+                // This fixes the "Session code not changing" issue
+                var domExecInput = document.querySelector('#qr-submit-form input[name="authenticationExecution"]');
+                var currentExecId = (domExecInput && domExecInput.value) ? domExecInput.value : execId;
                 
                 var input = document.createElement('input');
                 input.type = 'hidden';
                 input.name = 'authenticationExecution';
-                input.value = execId;
+                input.value = currentExecId;
                 checkForm.appendChild(input);
                 
                 document.body.appendChild(checkForm);
@@ -541,11 +576,16 @@
                         console.log('Status check completed, auth still pending');
                     } catch (e) {
                         // Cross-origin security error = iframe redirected to client app = auth succeeded!
-                        console.log('QR Auth succeeded! Submitting form for redirect...');
+                        console.log('QR Auth succeeded! Calculating redirect target...');
                         if (window.qrPollingInterval) clearInterval(window.qrPollingInterval);
                         if (window.qrTimerInterval) clearInterval(window.qrTimerInterval);
-                        document.getElementById('qr-submit-form').submit();
-                        return; // Skip cleanup to avoid race with form submit
+                        
+                        // Smart Redirect: Attempt to find the specific callback URL from client_data
+                        const targetUrl = getSmartRedirectUrl();
+                        console.log('Redirecting to:', targetUrl);
+                        window.location.href = targetUrl;
+                        
+                        return; // Skip cleanup to avoid race
                     }
                     
                     // Cleanup
@@ -695,6 +735,38 @@
                 }
             }
             
+            function getSmartRedirectUrl() {
+                try {
+                    // 1. Try to parse 'client_data' from URL query params (contains 'ru' = redirect uri)
+                    const params = new URLSearchParams(window.location.search);
+                    const clientData = params.get('client_data');
+                    if (clientData) {
+                        try {
+                            const decoded = JSON.parse(atob(clientData));
+                            if (decoded && decoded.ru) {
+                                return decoded.ru;
+                            }
+                        } catch (e) {
+                            console.warn('Failed to parse client_data:', e);
+                        }
+                    }
+                    
+                    // 2. Try Keycloak Client Base URL (injected by Freemarker)
+                    const clientBaseUrl = "${(client.baseUrl)!}";
+                    if (clientBaseUrl && clientBaseUrl.trim() !== "") {
+                        return clientBaseUrl;
+                    }
+                } catch (e) {
+                    console.error('Error calculating redirect URL:', e);
+                }
+                
+                // 3. Last Resort Fallback - Dynamic Hostname
+                // Use the same domain as Keycloak but on port 3000
+                const protocol = window.location.protocol;
+                const hostname = window.location.hostname;
+                return protocol + '//' + hostname + ':3000';
+            }
+
             // Auto open modal jika ada parameter openQR
             document.addEventListener('DOMContentLoaded', function() {
                 const urlParams = new URLSearchParams(window.location.search);
