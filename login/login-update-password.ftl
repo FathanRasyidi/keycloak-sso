@@ -81,6 +81,13 @@
                 </ul>
             </div>
 
+            <div class="flex items-center space-x-2">
+                <input type="checkbox" id="logout-sessions" name="logout-sessions" value="on" checked class="rounded border-gray-300 text-primary focus:ring-primary h-4 w-4 cursor-pointer accent-primary">
+                <label for="logout-sessions" class="text-sm text-gray-700 dark:text-gray-300 select-none cursor-pointer">
+                    ${msg("logoutOtherSessions")}
+                </label>
+            </div>
+
             <div class="flex gap-4">
                 <#if isAppInitiatedAction??>
                     <button class="flex-1 flex justify-center items-center py-3 px-4 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm text-sm font-medium text-gray-700 dark:text-gray-200 bg-white dark:bg-surface-dark hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"

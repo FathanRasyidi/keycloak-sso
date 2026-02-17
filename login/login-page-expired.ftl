@@ -6,7 +6,13 @@
                 <span class="material-icons-round text-3xl text-yellow-600 dark:text-yellow-400">schedule</span>
             </div>
             <h1 class="text-3xl font-bold mb-3 text-gray-900 dark:text-white">Sesi Kedaluwarsa</h1>
-            <p class="text-gray-500 dark:text-gray-400">Sesi login Anda telah berakhir. Silakan mulai ulang proses login.</p>
+            <p class="text-gray-500 dark:text-gray-400">
+                <#if message?has_content>
+                    ${kcSanitize(message.summary)?no_esc}
+                <#else>
+                    Sesi login Anda telah berakhir. Silakan mulai ulang proses login.
+                </#if>
+            </p>
         </div>
 
         <div class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4 mb-6">

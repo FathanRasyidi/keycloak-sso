@@ -96,7 +96,7 @@
         </form>
 
         <#-- Back to Login -->
-        <a href="${url.loginUrl}" class="mt-8 inline-flex items-center text-sm text-gray-500 dark:text-gray-400 hover:text-primary dark:hover:text-accent">
+        <a href="${url.loginRestartFlowUrl!url.loginUrl}" class="mt-8 inline-flex items-center text-sm text-gray-500 dark:text-gray-400 hover:text-primary dark:hover:text-accent">
             <span class="material-icons-round mr-1 text-lg">arrow_back</span>
             Kembali ke halaman login
         </a>

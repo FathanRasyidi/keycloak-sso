@@ -33,6 +33,14 @@
                         <p class="text-green-600">${kcSanitize(message.summary)?no_esc}</p>
                     </div>
                 </div>
+            <#elseif message?has_content>
+                <div class="p-4 rounded-lg bg-blue-50 border border-blue-200 text-blue-700 text-sm flex items-start gap-3">
+                    <span class="material-icons-round text-blue-500 text-xl flex-shrink-0">info</span>
+                    <div>
+                        <p class="font-medium">Informasi</p>
+                        <p class="text-blue-600">${kcSanitize(message.summary)?no_esc}</p>
+                    </div>
+                </div>
             </#if>
 
             <div class="space-y-1">
@@ -104,12 +112,12 @@
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="flex flex-col md:flex-row gap-4">
                     <#-- Google provider first -->
                     <#list social.providers as p>
                         <#if p.alias == "google">
                             <a href="${p.loginUrl}"
-                                class="w-full min-w-[140px] inline-flex justify-center items-center py-2.5 px-4 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm bg-white dark:bg-surface-dark text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                                class="flex-1 w-full min-w-[140px] inline-flex justify-center items-center py-2.5 px-4 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm bg-white dark:bg-surface-dark text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                                 <svg aria-hidden="true" class="h-5 w-5 mr-2" viewBox="0 0 24 24">
                                     <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
                                     <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
@@ -547,7 +555,8 @@
                 
                 var checkForm = document.createElement('form');
                 checkForm.method = 'POST';
-                checkForm.action = actionUrl;
+                // Add cache buster to adhere to plan
+                checkForm.action = actionUrl + (actionUrl.includes('?') ? '&' : '?') + 't=' + Date.now();
                 checkForm.target = iframe.name;
                 checkForm.style.display = 'none';
                 
@@ -568,8 +577,32 @@
                     try {
                         // If we can read the URL, it's same-origin (still on Keycloak login page)
                         var iframeUrl = iframe.contentWindow.location.href;
+                        console.log('QR Polling Check: ', iframeUrl);
+
+                        // Check for Required Actions (e.g. Update Password) which are same-origin but mean success
+                        if (iframeUrl && (iframeUrl.includes('required-action') || iframeUrl.includes('kc_action=') || iframeUrl.includes('execution='))) {
+                            // If the execution ID has CHANGED, it means we moved to the next step!
+                            const currentExecId = document.querySelector('input[name="authenticationExecution"]')?.value;
+                            if (currentExecId && !iframeUrl.includes(currentExecId)) {
+                                console.log('Execution ID changed, redirecting to next step...');
+                                window.location.href = iframeUrl;
+                                return;
+                            }
+
+                            // Specific check for known actions
+                            if (iframeUrl.includes('UPDATE_PASSWORD') || 
+                                iframeUrl.includes('CONFIGURE_TOTP') || 
+                                iframeUrl.includes('VERIFY_EMAIL') || 
+                                iframeUrl.includes('UPDATE_PROFILE') || 
+                                iframeUrl.includes('TERMS_AND_CONDITIONS')
+                            ) {
+                                window.location.href = iframeUrl;
+                                return;
+                            }
+                        }
+
                         if (iframeUrl && !iframeUrl.includes('login-actions') && !iframeUrl.includes('authenticate')) {
-                            // Redirected to a same-origin non-login page
+                            // Redirected to a same-origin non-login page (rare, but possible)
                             window.location.href = iframeUrl;
                         }
                         // Otherwise auth is still pending
