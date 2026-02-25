@@ -2,31 +2,26 @@
 <@layout.registrationLayout displayMessage=!messagesPerField.existsError('firstName','lastName','email','username') displayRequiredFields=true; section>
     <#if section = "form">
         <div class="mb-6">
-            <#-- Show social provider info -->
             <#-- Info box -->
             <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-5">
                 <div class="flex items-start gap-3">
                     <span class="material-icons-round text-blue-500 text-xl flex-shrink-0">info</span>
                     <div>
-                        <#-- Get provider ID from updateProfileCtx -->
+                        <#-- Ambil provider ID dari updateProfileCtx -->
                         <#assign providerInfo = "">
                         <#if updateProfileCtx?? && updateProfileCtx.identityProviderId??>
                             <#assign providerInfo = updateProfileCtx.identityProviderId?lower_case>
                         </#if>
                         
-                        <#-- Check for GitHub -->
                         <#if providerInfo == "github" || providerInfo?contains("github")>
                             <p class="text-sm font-medium text-blue-800 dark:text-blue-200">${msg("welcomeGithub")}</p>
                             <p class="text-xs text-blue-600 dark:text-blue-300 mt-1">${msg("linkedWithGithub")}.</p>
-                        <#-- Check for Google -->
                         <#elseif providerInfo == "google" || providerInfo?contains("google")>
                             <p class="text-sm font-medium text-blue-800 dark:text-blue-200">${msg("welcomeGoogle")}</p>
                             <p class="text-xs text-blue-600 dark:text-blue-300 mt-1">${msg("linkedWithGoogle")}.</p>
-                        <#-- Check for Facebook -->
                         <#elseif providerInfo == "facebook" || providerInfo?contains("facebook")>
                             <p class="text-sm font-medium text-blue-800 dark:text-blue-200">${msg("welcomeFacebook", "Selamat datang!")}</p>
                             <p class="text-xs text-blue-600 dark:text-blue-300 mt-1">${msg("linkedWithFacebook", "Akun Anda terhubung dengan Facebook")}.</p>
-                        <#-- Default for other social providers -->
                         <#else>
                             <p class="text-sm font-medium text-blue-800 dark:text-blue-200">${msg("welcomeSocial")}</p>
                             <p class="text-xs text-blue-600 dark:text-blue-300 mt-1">${msg("linkedWithSocial")}.</p>

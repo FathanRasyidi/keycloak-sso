@@ -201,7 +201,7 @@
             <!-- Logo Header -->
             <div class="flex items-center gap-3">
                 <img alt="" class="h-12 w-auto object-contain"
-                    src="${url.resourcesPath}/img/logo-pemda-diy.png" 
+                    src="https://jogjaprov.go.id/storage/files/shares/page/1518066730_2d84b769e3cc9d6f06f8c91a6c3e285c.jpg" 
                     onerror="this.src='https://jogjaprov.go.id/storage/files/shares/page/1518066730_2d84b769e3cc9d6f06f8c91a6c3e285c.jpg'" />
                 <div class="flex flex-col">
                     <span class="text-xs font-bold tracking-widest uppercase text-gray-500 dark:text-gray-400">PEMDA DIY</span>
@@ -223,7 +223,7 @@
         <!-- Panel Kanan: BG Hiasan -->
         <div class="hidden min-[1220px]:block min-[1220px]:w-[55%] bg-white dark:bg-gray-900"></div>
 
-        <!-- Fixed content that stays centered -->
+        <!-- Fixed content tengah -->
         <div class="hidden min-[1220px]:block fixed top-0 right-0 w-[55%] h-screen overflow-hidden bg-white dark:bg-gray-900 z-0">
             <div class="absolute inset-0">
                 <div class="absolute -top-[10%] -right-[10%] w-[80%] h-[80%] rounded-full mix-blend-multiply filter blur-3xl opacity-50 bg-[#8B5CF6] blob-orbit-1"></div>
@@ -237,6 +237,62 @@
                 </div>
             </div>
         </div>
+    </div>
+    
+    <!-- Toolkit -->
+    <div class="fixed bottom-6 right-6 z-[200] flex items-center gap-3">
+        <!-- Panduan -->
+        <a href="https://wiki.jogjaprov.go.id/diskominfo/panduan/panduan-2fa" target="_blank" rel="noopener noreferrer" id="guideBtn"
+            class="flex items-center px-5 py-3 rounded-full no-underline cursor-pointer z-[1000] border-[1.5px] border-white/40 dark:border-[#D4AF37]/50 bg-[#4A1C6F]/15 dark:bg-[#140828]/80 backdrop-blur-[30px] backdrop-saturate-200 shadow-[0_8px_24px_rgba(74,28,111,0.12),0_4px_12px_rgba(0,0,0,0.05),0_0_30px_rgba(212,175,55,0.1)] transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] hover:bg-[#4A1C6F]/20 dark:hover:bg-[#140828]/90 hover:border-white/40 dark:hover:border-[#D4AF37]/70 hover:-translate-y-0.5 hover:shadow-[0_12px_32px_rgba(74,28,111,0.18),0_6px_16px_rgba(0,0,0,0.08),0_0_40px_rgba(212,175,55,0.15)] active:translate-y-0 group" 
+            aria-label="Panduan SSO/2FA">
+            <span class="material-icons-round text-[20px] text-[#4A1C6F] dark:text-[#D4AF37] relative z-10 shrink-0">tips_and_updates</span>
+            <span id="guideLabel" class="mobile-label max-w-[150px] opacity-100 ml-2 overflow-hidden transition-all duration-500 text-[14px] font-semibold text-[#4A1C6F] dark:text-[#D4AF37] whitespace-nowrap tracking-wide relative z-10 [text-shadow:0_1px_2px_rgba(255,255,255,0.3)]">Panduan SSO/2FA</span>
+        </a>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const guideBtn = document.getElementById('guideBtn');
+                const guideLabel = document.getElementById('guideLabel');
+                let scrollTimeout;
+
+                function collapseGuide() {
+                    // Menciut kalau tampilan mobile max-width 640px
+                    if (window.innerWidth < 640) {
+                        guideBtn.style.paddingLeft = '0.875rem';
+                        guideBtn.style.paddingRight = '0.875rem';
+                        guideLabel.style.maxWidth = '0px';
+                        guideLabel.style.opacity = '0';
+                        guideLabel.style.marginLeft = '0px';
+                    }
+                }
+
+                function expandGuide() {
+                    if (window.innerWidth < 640) {
+                        guideBtn.style.paddingLeft = '1.25rem';
+                        guideBtn.style.paddingRight = '1.25rem';
+                        guideLabel.style.maxWidth = '150px';
+                        guideLabel.style.opacity = '1';
+                        guideLabel.style.marginLeft = '0.5rem';
+                    } else {
+                        // Pastikan di desktop selalu expanded (reset inline text)
+                        guideBtn.style.paddingLeft = '';
+                        guideBtn.style.paddingRight = '';
+                        guideLabel.style.maxWidth = '';
+                        guideLabel.style.opacity = '';
+                        guideLabel.style.marginLeft = '';
+                    }
+                }
+
+                // Cek kejadian scroll
+                window.addEventListener('scroll', function() {
+                    collapseGuide();
+                    clearTimeout(scrollTimeout);
+                    scrollTimeout = setTimeout(expandGuide, 1500); // 1.5 detik jeda diem
+                }, { passive: true });
+                
+                // layout menyesuaikan kalau layar dirotate atau resize
+                window.addEventListener('resize', expandGuide);
+            });
+        </script>
     </div>
 
     <script>

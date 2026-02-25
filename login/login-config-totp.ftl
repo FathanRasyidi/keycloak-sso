@@ -119,7 +119,7 @@
                     </div>
                 </div>
                 <div class="flex flex-col items-center">
-                    <div class="relative bg-white dark:bg-gray-800 p-3 rounded-xl shadow-lg qr-float glow-pulse">
+                    <div class="relative bg-white dark:bg-gray-800 p-2 rounded-xl shadow-lg qr-float glow-pulse">
                         <img id="kc-totp-secret-qr-code" 
                              src="data:image/png;base64, ${totp.totpSecretQrCode}" 
                              alt="QR Code" 
@@ -159,7 +159,7 @@
                 </#if>
             </div>
 
-            <#-- Device Name Input -->
+            <#-- Nama Perangkat -->
             <div class="space-y-2">
                 <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300" for="userLabel">
                     Nama Perangkat <#if totp.otpCredentials?size gte 1><span class="text-red-500">*</span></#if>
@@ -184,7 +184,7 @@
                 </#if>
             </div>
 
-            <#-- Logout from other devices -->
+            <#-- Logout dari perangkat lain -->
             <div class="flex items-center">
                 <input class="h-4 w-4 text-primary border-gray-300 rounded focus:ring-primary dark:bg-surface-dark dark:border-gray-600"
                     id="logout-sessions" 
@@ -218,7 +218,7 @@
         </form>
 
         <script>
-            // OTP Box Input Logic
+            // Logika Input OTP
             (function() {
                 const otpBoxes = document.querySelectorAll('.otp-box');
                 const hiddenInput = document.getElementById('totp');

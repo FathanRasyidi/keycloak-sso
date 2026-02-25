@@ -8,9 +8,9 @@ Kami menerima permintaan untuk memperbarui alamat email akun SSO PEMDA DIY Anda.
 Klik link berikut untuk mengkonfirmasi perubahan:
 ${link}
 
-⏰ Link ini akan kedaluwarsa dalam ${linkExpiration}.
+Link ini akan kedaluwarsa dalam ${linkExpiration}.
 
-🛡️ Jika Anda tidak meminta perubahan email, segera hubungi administrator.
+Jika Anda tidak meminta perubahan email, segera hubungi administrator.
 
 -------------------------------------
 SSO PEMDA DIY

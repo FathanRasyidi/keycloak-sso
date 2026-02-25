@@ -5,7 +5,8 @@
                 onclick="showQRModal()" 
                 class="w-full flex justify-center items-center py-3 px-4 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm bg-white dark:bg-surface-dark text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                 <span class="material-icons-round mr-2">qr_code_scanner</span>
-                ${msg("doQrCodeLogin")}
+                <#-- ${msg("doQrCodeLogin")} defaultnya inggris -->
+                Masuk dengan QR Code
             </button>
         </div>
 

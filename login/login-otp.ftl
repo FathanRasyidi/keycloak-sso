@@ -22,10 +22,10 @@
                 </div>
             </#if>
 
-            <#-- Hidden input for actual OTP value -->
+            <#-- Input untuk OTP -->
             <input type="hidden" id="otp" name="otp" value="" />
 
-            <#-- Multiple OTP Credentials Selection -->
+            <#-- Jika memiliki lebih dari 1 Authenticator -->
             <#if otpLogin.userOtpCredentials?size gt 1>
                 <div class="space-y-2">
                     <label class="block text-sm font-semibold text-gray-700 dark:text-gray-300">Pilih Perangkat</label>
@@ -66,7 +66,7 @@
                 </div>
             </#if>
 
-            <#-- OTP Input Boxes -->
+            <#-- Kotak Input OTP -->
             <div class="flex justify-center gap-2" id="otp-inputs">
                 <input type="text" maxlength="1" class="w-12 h-14 text-center text-2xl font-bold rounded-lg bg-surface-light dark:bg-surface-dark border <#if messagesPerField.existsError('totp')>border-red-500<#else>border-gray-200 dark:border-gray-700</#if> focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none dark:text-white" data-index="0" inputmode="numeric" pattern="[0-9]*" autofocus />
                 <input type="text" maxlength="1" class="w-12 h-14 text-center text-2xl font-bold rounded-lg bg-surface-light dark:bg-surface-dark border <#if messagesPerField.existsError('totp')>border-red-500<#else>border-gray-200 dark:border-gray-700</#if> focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none dark:text-white" data-index="1" inputmode="numeric" pattern="[0-9]*" />
@@ -76,7 +76,7 @@
                 <input type="text" maxlength="1" class="w-12 h-14 text-center text-2xl font-bold rounded-lg bg-surface-light dark:bg-surface-dark border <#if messagesPerField.existsError('totp')>border-red-500<#else>border-gray-200 dark:border-gray-700</#if> focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none dark:text-white" data-index="5" inputmode="numeric" pattern="[0-9]*" />
             </div>
 
-            <#-- Error Message -->
+            <#-- Error -->
             <div id="otp_error_container" class="min-h-[20px]">
                 <#if messagesPerField.existsError('totp')>
                     <p class="text-red-500 text-xs text-center flex items-center justify-center gap-1">
@@ -86,7 +86,7 @@
                 </#if>
             </div>
 
-            <#-- Verify Button -->
+            <#-- Tombol Verifikasi -->
             <button
                 class="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-primary hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors"
                 type="submit"
@@ -102,7 +102,7 @@
         </a>
 
         <script>
-            // OTP Box Input Logic
+            // OTP Input Logic
             (function() {
                 const otpInputs = document.querySelectorAll('#otp-inputs input');
                 const hiddenInput = document.getElementById('otp');
@@ -123,7 +123,7 @@
                         }
                         updateHiddenInput();
 
-                        // Auto-submit when all 6 digits are entered
+                        // Auto-submit jika 6 digit terisi
                         if (hiddenInput.value.length === 6) {
                             setTimeout(function() {
                                 document.getElementById('kc-otp-login-form').submit();
@@ -157,7 +157,7 @@
                         otpInputs[nextIndex].focus();
                         updateHiddenInput();
 
-                        // Auto-submit when all 6 digits are pasted
+                        // Auto-submit jika 6 digit terpaste
                         if (hiddenInput.value.length === 6) {
                             setTimeout(function() {
                                 document.getElementById('kc-otp-login-form').submit();
@@ -170,7 +170,7 @@
                     });
                 });
 
-                // Handle radio selection styling
+                // Pilihan Authenticator
                 var radios = document.querySelectorAll('input[name="selectedCredentialId"]');
                 radios.forEach(function(radio) {
                     radio.addEventListener('change', function() {

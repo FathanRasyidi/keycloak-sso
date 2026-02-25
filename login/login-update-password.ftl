@@ -84,7 +84,7 @@
             <div class="flex items-center space-x-2">
                 <input type="checkbox" id="logout-sessions" name="logout-sessions" value="on" checked class="rounded border-gray-300 text-primary focus:ring-primary h-4 w-4 cursor-pointer accent-primary">
                 <label for="logout-sessions" class="text-sm text-gray-700 dark:text-gray-300 select-none cursor-pointer">
-                    ${msg("logoutOtherSessions")}
+                    Keluar dari semua perangkat lain
                 </label>
             </div>
 
@@ -156,7 +156,7 @@
             const form = document.getElementById('kc-passwd-update-form');
             const mismatchError = document.getElementById('password-mismatch-error');
 
-            // Prevent form submission if passwords don't match
+            // Error handling password
             if (form) {
                 form.addEventListener('submit', function(e) {
                     const password = passwordInput.value;

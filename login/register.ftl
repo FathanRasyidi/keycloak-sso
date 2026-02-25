@@ -156,9 +156,10 @@
                 <input class="h-4 w-4 mt-1 text-primary border-gray-300 rounded focus:ring-primary dark:bg-surface-dark dark:border-gray-600"
                     id="terms" 
                     name="terms" 
-                    type="checkbox" />
+                    type="checkbox" 
+                    required />
                 <label class="ml-2 block text-xs text-gray-500 dark:text-gray-400 leading-tight" for="terms">
-                    Saya menyetujui <a class="text-primary dark:text-accent hover:underline" href="#">${msg("termsOfUse")}</a> ${msg("and")} <a class="text-primary dark:text-accent hover:underline" href="#">${msg("privacyPolicy")}</a> PEMDA DIY.
+                    Saya menyetujui <a class="text-primary dark:text-accent hover:underline" href="#">${msg("termsOfUse")}</a> ${msg("and")} <a class="text-primary dark:text-accent hover:underline" href="https://drive.google.com/file/d/1nvLDfcjULstrpKbt-8o3nSY23FgCMxl4/view" target="_blank" rel="noopener noreferrer">${msg("privacyPolicy")}</a> PEMDA DIY.
                 </label>
             </div>
 
@@ -279,7 +280,7 @@
 
     <#elseif section = "script">
         <script>
-            // Validasi password real-time
+            // Validasi password
             const passwordInput = document.getElementById('password');
             const confirmPasswordInput = document.getElementById('password-confirm');
 

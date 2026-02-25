@@ -112,8 +112,7 @@
                     </div>
                 </div>
 
-                <div class="flex flex-col md:flex-row gap-4">
-                    <#-- Google provider first -->
+                <div class="grid grid-cols-1 md:grid-cols-<#if social.providers?size == 1>1<#elseif social.providers?size == 2>2<#else>3</#if> gap-4">
                     <#list social.providers as p>
                         <#if p.alias == "google">
                             <a href="${p.loginUrl}"
@@ -129,7 +128,6 @@
                         </#if>
                     </#list>
                     
-                    <#-- GitHub provider second -->
                     <#list social.providers as p>
                         <#if p.alias == "github">
                             <a href="${p.loginUrl}"
@@ -142,7 +140,6 @@
                         </#if>
                     </#list>
                     
-                    <#-- Facebook provider -->
                     <#list social.providers as p>
                         <#if p.alias == "facebook">
                             <a href="${p.loginUrl}"
@@ -155,7 +152,7 @@
                         </#if>
                     </#list>
                     
-                    <#-- Other providers (if any) -->
+                    <#-- providers lainnya -->
                     <#list social.providers as p>
                         <#if p.alias != "google" && p.alias != "github" && p.alias != "facebook">
                             <a href="${p.loginUrl}"
@@ -274,13 +271,13 @@
 
     <#elseif section = "script">
         <script>
-            // Check for error from login.ftl redirect (via sessionStorage)
+            // Cek error dari redirect login (pakai sessionStorage)
             document.addEventListener('DOMContentLoaded', function() {
                 const storedError = sessionStorage.getItem('auth_error');
                 if (storedError) {
                     try {
                         const errorData = JSON.parse(storedError);
-                        // Clear immediately so it doesn't show again on refresh
+                        // Langsung hapus supaya tidak muncul lagi pas refresh
                         sessionStorage.removeItem('auth_error');
                         
                         if (errorData && errorData.summary) {
@@ -293,7 +290,7 @@
             });
 
             function showErrorAlert(message, type) {
-                // Determine color based on type
+                // Pilih warna sesuai tipe
                 const isError = type === 'error' || type === 'warning';
                 const isSuccess = type === 'success';
                 
@@ -313,10 +310,10 @@
                     '</div>' +
                     '</div>';
 
-                // Insert at top of form
+                // Taruh di paling atas form
                 const form = document.getElementById('kc-form-login');
                 if (form) {
-                    // Remove existing alerts first to avoid duplicates
+                    // Hapus alert lama supaya tidak double
                     const existingAlerts = form.querySelectorAll('.rounded-lg.border.flex.items-start');
                     existingAlerts.forEach(el => el.remove());
                     
@@ -372,7 +369,7 @@
 
                     '<div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-0">' +
                     
-                    // Left Column
+                    // Kolom Kiri
                     '<div class="flex flex-col items-center justify-center pt-4 md:pt-0 md:pr-6 border-r border-gray-100 dark:border-gray-700">' +
                     '<p class="text-center text-gray-500 dark:text-gray-400 text-sm mb-6">Scan QR menggunakan aplikasi mobile <br/><strong>PEMDA DIY</strong></p>' +
                     
@@ -389,7 +386,7 @@
                     '</div>' +
                     '</div>' +
 
-                    // Right Column
+                    // Kolom Kanan
                     '<div class="flex flex-col justify-center h-full ml-4 pt-0 md:pl-6">' +
                     '<h4 class="text-base font-semibold text-gray-900 dark:text-white mb-8 flex items-center gap-2">' +
                     '<span class="material-icons-round text-primary text-lg">help_outline</span>' +
@@ -397,7 +394,7 @@
                     '</h4>' +
                     
                     '<div class="relative mb-2">' +
-                    // Connecting Line
+                    
                     '<div class="absolute left-4 top-4 bottom-8 w-0.5 bg-gray-100 dark:bg-gray-700 -ml-[1px]"></div>' +
                     
                     '<div class="space-y-8">' +
@@ -451,18 +448,18 @@
                 document.body.insertAdjacentHTML('beforeend', modalHTML);
                 document.body.style.overflow = 'hidden';
 
-                // Check if this is the first open or a re-open
+                // Cek apakah ini pertama kali buka atau buka lagi
                 if (typeof window.qrFirstOpen === 'undefined') {
                     window.qrFirstOpen = true;
                 }
 
                 if (window.qrFirstOpen) {
-                    // First time: Use the static QR code from page load
+                    // Pertama kali: Pakai QR statis dari page load
                     window.qrFirstOpen = false;
                     startQRPolling(execId);
                 } else {
-                    // Re-open: The static QR is likely stale/expired. Force a refresh.
-                    // Show loading overlay immediately
+                    // Buka lagi: QR kemungkinan sudah kedaluwarsa. Refresh saja.
+                    // Tampilkan loading overlay segera
                     const qrContainer = document.getElementById('qr-container');
                     if (qrContainer) {
                         qrContainer.style.position = 'relative';
@@ -473,7 +470,7 @@
                         qrContainer.appendChild(overlay);
                     }
                     
-                    // Fetch new QR session
+                    // Ambil sesi QR baru
                     refreshQRCode();
                 }
             }
@@ -507,7 +504,7 @@
                         clearInterval(timerInterval);
                         clearInterval(pollingInterval);
                         
-                        // Show overlay with refresh button only
+                        // Tampilkan overlay dengan tombol refresh
                         const qrContainer = document.getElementById('qr-container');
                         if (qrContainer) {
                             qrContainer.style.position = 'relative';
@@ -519,7 +516,7 @@
                             qrContainer.appendChild(overlay);
                         }
                         
-                        // Update timer text
+                        // Update teks timer
                         const timerText = document.getElementById('timer-text');
                         if (timerText) {
                             timerText.textContent = 'QR Code Expired';
@@ -538,12 +535,12 @@
             }
 
             function checkAuthStatus(execId) {
-                // Use hidden iframe to check auth status without disrupting the modal.
+                // Pakai iframe tersembunyi untuk cek status auth.
                 // - Auth pending: Keycloak redirects iframe to same-origin login page → URL is readable
                 // - Auth success: Keycloak redirects iframe to cross-origin client app → reading URL throws error
                 
-                // Determine Action URL
-                // Prioritize the modal's internal form if it exists (updated by refresh), then main form
+                // Tentukan Action URL
+                // Prioritaskan form internal modal kalau ada, kalau tidak pakai form utama
                 const qrForm = document.getElementById('qr-submit-form');
                 const mainForm = document.getElementById('kc-form-login');
                 const actionUrl = qrForm ? qrForm.action : (mainForm ? mainForm.action : '${url.loginAction}');
@@ -555,13 +552,13 @@
                 
                 var checkForm = document.createElement('form');
                 checkForm.method = 'POST';
-                // Add cache buster to adhere to plan
+                
                 checkForm.action = actionUrl + (actionUrl.includes('?') ? '&' : '?') + 't=' + Date.now();
                 checkForm.target = iframe.name;
                 checkForm.style.display = 'none';
                 
-                // Prioritize the DOM value from the modal's form which is updated by refreshQRCode
-                // This fixes the "Session code not changing" issue
+                // Prioritaskan nilai DOM dari form modal yang sudah di-update
+                // Ini untuk perbaiki masalah kode sesi tidak ganti
                 var domExecInput = document.querySelector('#qr-submit-form input[name="authenticationExecution"]');
                 var currentExecId = (domExecInput && domExecInput.value) ? domExecInput.value : execId;
                 
@@ -575,13 +572,13 @@
                 
                 iframe.onload = function() {
                     try {
-                        // If we can read the URL, it's same-origin (still on Keycloak login page)
+                        // Kalau URL bisa dibaca, berarti masih di domain yang sama (masih di login Keycloak)
                         var iframeUrl = iframe.contentWindow.location.href;
                         console.log('QR Polling Check: ', iframeUrl);
 
-                        // Check for Required Actions (e.g. Update Password) which are same-origin but mean success
+                        // Cek Required Actions (misal ganti password) 
                         if (iframeUrl && (iframeUrl.includes('required-action') || iframeUrl.includes('kc_action=') || iframeUrl.includes('execution='))) {
-                            // If the execution ID has CHANGED, it means we moved to the next step!
+                            // Kalau execution ID berubah, berarti lanjut
                             const currentExecId = document.querySelector('input[name="authenticationExecution"]')?.value;
                             if (currentExecId && !iframeUrl.includes(currentExecId)) {
                                 console.log('Execution ID changed, redirecting to next step...');
@@ -589,7 +586,7 @@
                                 return;
                             }
 
-                            // Specific check for known actions
+                            // Cek spesifik untuk aksi yang sudah diketahui
                             if (iframeUrl.includes('UPDATE_PASSWORD') || 
                                 iframeUrl.includes('CONFIGURE_TOTP') || 
                                 iframeUrl.includes('VERIFY_EMAIL') || 
@@ -605,15 +602,15 @@
                             // Redirected to a same-origin non-login page (rare, but possible)
                             window.location.href = iframeUrl;
                         }
-                        // Otherwise auth is still pending
+                        // Kalau tidak, berarti auth masih pending
                         console.log('Status check completed, auth still pending');
                     } catch (e) {
-                        // Cross-origin security error = iframe redirected to client app = auth succeeded!
+                        // Error cross-origin = iframe diarahkan ke app client = auth berhasil!
                         console.log('QR Auth succeeded! Calculating redirect target...');
                         if (window.qrPollingInterval) clearInterval(window.qrPollingInterval);
                         if (window.qrTimerInterval) clearInterval(window.qrTimerInterval);
                         
-                        // Smart Redirect: Attempt to find the specific callback URL from client_data
+                        // Smart Redirect: Coba cari URL callback di client_data
                         const targetUrl = getSmartRedirectUrl();
                         console.log('Redirecting to:', targetUrl);
                         window.location.href = targetUrl;
@@ -621,7 +618,7 @@
                         return; // Skip cleanup to avoid race
                     }
                     
-                    // Cleanup
+                    // Bersihkan data
                     setTimeout(function() {
                         if (iframe.parentNode) iframe.parentNode.removeChild(iframe);
                         if (checkForm.parentNode) checkForm.parentNode.removeChild(checkForm);
@@ -670,16 +667,16 @@
                             }
                             
                             if (newQrImage && qrImage) {
-                                // Update QR image
+                                // Update gambar QR
                                 qrImage.src = 'data:image/png;base64,' + newQrImage;
                                 
-                                // Update session text
+                                // Update teks sesi
                                 const sessionText = document.querySelector('#qrModal p b');
                                 if (sessionText) {
                                     sessionText.parentElement.innerHTML = '<b>Session:</b> ' + (newTabId || 'N/A');
                                 }
                                 
-                                // Update hidden form
+                                // Update form tersembunyi
                                 const execInput = document.querySelector('#qr-submit-form input[name="authenticationExecution"]');
                                 if (execInput && newExecId) {
                                     execInput.value = newExecId;
@@ -693,7 +690,7 @@
                                     mainQrData.setAttribute('data-qr-exec-id', newExecId || '');
                                 }
                                 
-                                // Remove overlay
+                                // Hapus overlay
                                 if (overlay) {
                                     overlay.remove();
                                 }
@@ -724,7 +721,7 @@
             }
             
             function resetQRTimer(execId) {
-                // Clear existing intervals
+                // Bersihkan interval yang ada
                 if (window.qrPollingInterval) {
                     clearInterval(window.qrPollingInterval);
                 }
@@ -732,7 +729,7 @@
                     clearInterval(window.qrTimerInterval);
                 }
                 
-                // Reset timer display
+                // Reset tampilan timer
                 const timerText = document.getElementById('timer-text');
                 const timerDiv = document.getElementById('qr-timer');
                 if (timerText) {
@@ -742,7 +739,7 @@
                     timerDiv.className = 'flex items-center gap-2 text-sm text-gray-400 dark:text-gray-500 mb-6';
                 }
                 
-                // Start new polling
+                // Mulai polling baru
                 startQRPolling(execId);
             }
 
@@ -752,7 +749,7 @@
             }
 
             function closeQRModal() {
-                // Clear polling intervals
+                // Bersihin interval polling
                 if (window.qrPollingInterval) {
                     clearInterval(window.qrPollingInterval);
                     window.qrPollingInterval = null;
@@ -770,7 +767,7 @@
             
             function getSmartRedirectUrl() {
                 try {
-                    // 1. Try to parse 'client_data' from URL query params (contains 'ru' = redirect uri)
+                    // 1. Coba ambil 'client_data' dari query 'ru'
                     const params = new URLSearchParams(window.location.search);
                     const clientData = params.get('client_data');
                     if (clientData) {
@@ -784,7 +781,7 @@
                         }
                     }
                     
-                    // 2. Try Keycloak Client Base URL (injected by Freemarker)
+                    // 2. Coba Base URL Client Keycloak
                     const clientBaseUrl = "${(client.baseUrl)!}";
                     if (clientBaseUrl && clientBaseUrl.trim() !== "") {
                         return clientBaseUrl;
@@ -792,9 +789,8 @@
                 } catch (e) {
                     console.error('Error calculating redirect URL:', e);
                 }
-                
-                // 3. Last Resort Fallback - Dynamic Hostname
-                // Use the same domain as Keycloak but on port 3000
+                // 3. Hostname dinamis
+                // Gunakan domain yang sama tapi pakai port 3000
                 const protocol = window.location.protocol;
                 const hostname = window.location.hostname;
                 return protocol + '//' + hostname + ':3000';

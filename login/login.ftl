@@ -3,26 +3,27 @@
 
     <#-- 
         SILENT REDIRECTOR 
-        This page serves solely to bounce the user back to the QR Code flow (restart_flow)
-        when a standard login error occurs, preserving the error message via URL parameters.
+        Halaman ini berfungsi untuk mengembalikan user ke flow QR Code (restart_flow)
+        ketika terjadi kesalahan login standar, dengan menyimpan pesan kesalahan melalui parameter URL.
+        Ini terjadi karena login.ftl tidak digunakan dalam default flow jika menggunakan QR Code Extension.
     -->
 
     <#if section = "form">
-        <#-- Calculate redirect target -->
+        <#-- Untuk redirect target -->
         <#assign targetUrl = url.loginRestartFlowUrl!url.loginUrl>
         
         <script>
-            // Prepare error data
+            // Untuk error data
             <#if message?has_content>
                 const errorData = {
                     type: '${message.type!'unknown'}',
                     summary: '${message.summary!''?js_string}'
                 };
-                // Save to sessionStorage to survive the redirect
+                // Simpan ke sessionStorage untuk redirect
                 sessionStorage.setItem('auth_error', JSON.stringify(errorData));
             </#if>
 
-            // Immediate redirect
+            // Redirect
             window.location.href = "${targetUrl?no_esc}";
         </script>
         

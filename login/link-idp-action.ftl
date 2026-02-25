@@ -18,6 +18,22 @@
                 <#assign providerName = "GitHub">
             <#elseif idpAlias?lower_case?contains("facebook")>
                 <#assign providerName = "Facebook">
+            <#elseif idpAlias?lower_case?contains("bitbucket")>
+                <#assign providerName = "BitBucket">
+            <#elseif idpAlias?lower_case?contains("gitlab")>
+                <#assign providerName = "GitLab">
+            <#elseif idpAlias?lower_case?contains("linkedin")>
+                <#assign providerName = "LinkedIn">
+            <#elseif idpAlias?lower_case?contains("microsoft")>
+                <#assign providerName = "Microsoft">
+            <#elseif idpAlias?lower_case?contains("openshift")>
+                <#assign providerName = "Openshift v4">
+            <#elseif idpAlias?lower_case?contains("paypal")>
+                <#assign providerName = "PayPal">
+            <#elseif idpAlias?lower_case?contains("stackoverflow")>
+                <#assign providerName = "StackOverflow">
+            <#elseif idpAlias?lower_case?contains("twitter")>
+                <#assign providerName = "Twitter">
             </#if>
         </#if>
 
@@ -32,12 +48,12 @@
 
         <form action="${url.loginAction}" class="flex gap-3" method="post">
             
-            <button type="submit" name="submitAction" value="linkAccount" 
+            <button type="submit" name="continue" id="kc-continue" value="${msg('doContinue')!''}" 
                 class="flex-1 py-2.5 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-primary hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors">
                 Lanjutkan
             </button>
             
-            <button type="submit" name="submitAction" value="cancel" 
+            <button type="submit" name="cancel-aia" id="kc-cancel" value="${msg('doCancel')!''}" 
                 class="flex-1 py-2.5 px-4 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm text-sm font-medium text-gray-700 dark:text-gray-200 bg-white dark:bg-surface-dark hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                 Batal
             </button>

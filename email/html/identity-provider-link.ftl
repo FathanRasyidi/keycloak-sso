@@ -45,7 +45,7 @@
                                 <tr>
                                     <td style="padding: 40px;">
                                         <h2 style="margin: 0 0 25px 0; color: #1f2937; font-size: 24px; font-weight: 600;">
-                                            Halo,
+                                            Halo ${user.firstName!""},
                                         </h2>
                                         <p style="margin: 0 0 25px 0; color: #6b7280; font-size: 15px; line-height: 1.7;">
                                             Seseorang ingin menghubungkan akun Anda dengan akun <strong style="color: #4A1C6F;">${identityProviderAlias!"Provider"}</strong>. Jika ini adalah Anda, klik tombol di bawah ini untuk menghubungkan akun.
