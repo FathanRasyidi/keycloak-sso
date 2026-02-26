@@ -204,8 +204,8 @@
                     src="https://jogjaprov.go.id/storage/files/shares/page/1518066730_2d84b769e3cc9d6f06f8c91a6c3e285c.jpg" 
                     onerror="this.src='https://jogjaprov.go.id/storage/files/shares/page/1518066730_2d84b769e3cc9d6f06f8c91a6c3e285c.jpg'" />
                 <div class="flex flex-col">
-                    <span class="text-xs font-bold tracking-widest uppercase text-gray-500 dark:text-gray-400">PEMDA DIY</span>
-                    <span class="text-xs font-semibold text-primary dark:text-accent">Yogyakarta</span>
+                    <span class="text-xs font-bold tracking-widest uppercase text-gray-500 dark:text-gray-400">Pemerintah Daerah</span>
+                    <span class="text-xs font-semibold text-primary dark:text-accent">D.I.Yogyakarta</span>
                 </div>
             </div>
 
